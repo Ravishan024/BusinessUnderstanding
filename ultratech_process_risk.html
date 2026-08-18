@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UltraTech Cement — Business Process & Risk Map</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --surface-2:      #f4f3f0;
+    --surface-3:      #eceae5;
+    --border:         #ddd9d2;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #83817a;
+    --accent:         #2a78d6;
+    --accent-soft:    #e7f0fb;
+    --good:           #0ca30c;
+    --warning:        #fab219;
+    --critical:       #d03b3b;
+    --good-bg:        #e5f7e5;
+    --warning-bg:     #fff4dd;
+    --critical-bg:    #fbe6e6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-1:      #1a1a19;
+      --surface-2:      #232322;
+      --surface-3:      #2c2c2a;
+      --border:         #3a3a37;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #8f8d84;
+      --accent:         #3987e5;
+      --accent-soft:    #17263a;
+      --good:           #0ca30c;
+      --warning:        #fab219;
+      --critical:       #e66767;
+      --good-bg:        #123312;
+      --warning-bg:     #3a2c0e;
+      --critical-bg:    #3a1717;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --surface-2:      #232322;
+    --surface-3:      #2c2c2a;
+    --border:         #3a3a37;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #8f8d84;
+    --accent:         #3987e5;
+    --accent-soft:    #17263a;
+    --good:           #0ca30c;
+    --warning:        #fab219;
+    --critical:       #e66767;
+    --good-bg:        #123312;
+    --warning-bg:     #3a2c0e;
+    --critical-bg:    #3a1717;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background: var(--surface-1);
+    color: var(--text-primary);
+  }
+  .viz-root { background: var(--surface-1); min-height: 100vh; padding: 28px 24px 60px; }
+  .wrap { max-width: 1160px; margin: 0 auto; }
+
+  .top-bar { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 6px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .subtitle { color: var(--text-secondary); font-size: 14px; margin: 0 0 20px; max-width: 720px; line-height: 1.5; }
+
+  .theme-toggle {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .theme-toggle:hover { background: var(--surface-3); }
+
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 24px; font-size: 12.5px; color: var(--text-secondary); align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .dot.good { background: var(--good); }
+  .dot.warning { background: var(--warning); }
+  .dot.critical { background: var(--critical); }
+  .legend-hint { color: var(--text-muted); }
+
+  /* Flow */
+  .flow {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .arrow-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .stage {
+    background: var(--surface-2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .15s ease, transform .1s ease, box-shadow .15s ease;
+    position: relative;
+    font-family: inherit;
+    color: var(--text-primary);
+  }
+  .stage:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+  .stage.active { border-color: var(--accent); background: var(--accent-soft); }
+  .stage .stage-num { font-size: 10.5px; color: var(--text-muted); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+  .stage .stage-title { font-size: 13.5px; font-weight: 700; margin: 4px 0 8px; line-height: 1.25; min-height: 34px; }
+  .stage .risk-badges { display: flex; gap: 4px; flex-wrap: wrap; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 5px;
+    line-height: 1.6;
+  }
+  .badge.good { color: var(--good); background: var(--good-bg); }
+  .badge.warning { color: #a8720c; background: var(--warning-bg); }
+  .badge.critical { color: var(--critical); background: var(--critical-bg); }
+  :root[data-theme="dark"] .badge.warning, @media (prefers-color-scheme: dark) { }
+  .badge svg { width: 9px; height: 9px; }
+
+  .connector { display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 16px; }
+
+  /* Detail panel */
+  .detail {
+    background: var(--surface-2);
+    border: 1.5px solid var(--accent);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-top: 18px;
+  }
+  .detail-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 4px; }
+  .detail-head h2 { font-size: 17px; margin: 0; }
+  .detail-summary { color: var(--text-secondary); font-size: 13px; margin: 4px 0 16px; line-height: 1.55; }
+
+  .steps { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .step-chip {
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 11.5px;
+    color: var(--text-secondary);
+  }
+
+  table.risk-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.risk-table th {
+    text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .03em;
+    color: var(--text-muted); font-weight: 700; padding: 6px 10px; border-bottom: 1px solid var(--border);
+  }
+  table.risk-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text-primary); }
+  table.risk-table tr:last-child td { border-bottom: none; }
+  .rt-variable { font-weight: 700; white-space: nowrap; }
+  .rt-source { color: var(--text-muted); font-size: 11px; }
+
+  .close-hint { font-size: 11px; color: var(--text-muted); cursor: pointer; }
+  .close-hint:hover { color: var(--text-secondary); }
+
+  .crosscut {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--border);
+  }
+  .crosscut h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-muted); margin: 0 0 10px; }
+  .cc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .cc-card {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px;
+  }
+  .cc-card .cc-title { font-size: 12.5px; font-weight: 700; margin-bottom: 4px; }
+  .cc-card .cc-body { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+  .footer-note { margin-top: 26px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6; }
+
+  @media (max-width: 900px) {
+    .flow, .arrow-row { grid-template-columns: repeat(3, 1fr); }
+    .arrow-row .connector:nth-child(3n) { display: none; }
+    .cc-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .flow, .arrow-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body data-theme="">
+<div class="viz-root" id="vizRoot">
+  <div class="wrap">
+    <div class="top-bar">
+      <div>
+        <h1>UltraTech Cement — Business Process & Risk Map</h1>
+        <p class="subtitle">Click a stage to see what happens there and the risks tied to it — from procuring raw materials to selling the finished cement. Companion to the Business Variable Framework workbook.</p>
+      </div>
+      <button class="theme-toggle" id="themeToggle">Dark mode</button>
+    </div>
+
+    <div class="legend">
+      <span class="legend-hint">Risk / impact level:</span>
+      <span class="legend-item"><span class="dot good"></span>Low</span>
+      <span class="legend-item"><span class="dot warning"></span>Medium</span>
+      <span class="legend-item"><span class="dot critical"></span>High</span>
+    </div>
+
+    <div class="flow" id="flowRow"></div>
+    <div class="arrow-row" id="arrowRow"></div>
+
+    <div class="detail" id="detail"></div>
+
+    <div class="footer-note" id="footerNote"></div>
+  </div>
+</div>
+
+<script>
+const STAGES = [
+  {
+    id: "procure-raw",
+    num: "01",
+    title: "Procure raw materials",
+    topRisk: "warning",
+    summary: "Limestone, clay, silica and gypsum are mined or sourced near each plant — the first link in the chain and the one that decides where a plant can even be built.",
+    steps: ["Limestone quarrying", "Clay / silica sourcing", "Gypsum sourcing", "Quality testing of ore"],
+    risks: [
+      { variable: "Source location", level: "warning", text: "Materials sourced near plant sites across India (e.g. Chhattisgarh limestone) — regional concentration means local disruption can hit supply.", source: "Zerodha Varsity" },
+      { variable: "Captive vs. open market", level: "good", text: "UltraTech owns captive limestone quarries built next to its plants — a real cost & supply-security advantage over smaller players.", source: "Zerodha Varsity" },
+      { variable: "Supplier concentration", level: "warning", text: "Largely self-supplied for limestone; clay/silica/gypsum still involve regional suppliers.", source: "Zerodha Varsity" },
+      { variable: "Regulatory: mining leases", level: "warning", text: "Requires state-level mining leases and environmental clearances — can be delayed, contested, or revoked.", source: "Zerodha Varsity" },
+    ],
+  },
+  {
+    id: "procure-fuel",
+    num: "02",
+    title: "Procure fuel & power",
+    topRisk: "critical",
+    summary: "Cement kilns need enormous heat (~1450°C) — coal and petcoke are burned to get there, and power runs the grinding and crushing equipment. This is the single biggest cost swing factor in the business.",
+    steps: ["Coal / petcoke sourcing", "Captive coal linkage", "Grid + captive power", "Renewable / waste-heat capture"],
+    risks: [
+      { variable: "Input price volatility", level: "critical", text: "Coal/petcoke prices are volatile and the biggest swing factor in cement costs — roughly 160kg of coal per tonne of cement produced.", source: "Safal Niveshak" },
+      { variable: "Captive vs. open market", level: "good", text: "UltraTech holds captive coal mine linkages, partially insulating it from open-market price spikes (unlike many smaller peers).", source: "Zerodha Varsity" },
+      { variable: "Substitutability", level: "warning", text: "Few large-scale fuel substitutes exist yet; UltraTech is investing in waste heat recovery + renewables to cover 25-30% of energy needs over time.", source: "Zerodha Varsity" },
+      { variable: "Trade policy exposure", level: "warning", text: "A portion of coal is imported, so import duties and global coal prices matter directly to cost.", source: "Not yet researched — flagged for follow-up" },
+    ],
+  },
+  {
+    id: "manufacture",
+    num: "03",
+    title: "Manufacture (kiln process)",
+    topRisk: "critical",
+    summary: "Raw materials are crushed and ground into 'raw meal', preheated, then burned in a kiln to form clinker — the core intermediate product — which is cooled and ground with gypsum into cement.",
+    steps: ["Crushing", "Raw meal grinding", "Preheating / precalcining", "Kiln burning → clinker (~1450°C)", "Cooling", "Cement grinding (clinker + gypsum)"],
+    risks: [
+      { variable: "Environmental / ESG exposure", level: "critical", text: "Cement manufacturing is carbon- and energy-intensive; tightening emissions norms are a probable future cost driver for kiln operations.", source: "Zerodha Varsity" },
+      { variable: "Fixed vs. variable costs", level: "warning", text: "Heavy fixed-cost base (plant, kiln) plus variable fuel/power costs — capacity utilization strongly drives per-unit profitability.", source: "Framework analysis" },
+      { variable: "Capital intensity", level: "warning", text: "New capacity costs roughly ₹7,200/tonne (2013 figure, higher today); UltraTech is investing ~₹16,000 crore to expand to 242.5 MTPA by FY2027-28.", source: "The Strategy Story" },
+      { variable: "Returns trend", level: "critical", text: "Industry-wide, returns on new cement capacity have fallen over time (IRR ~17% in 2008 to ~9% in 2013) — a red flag for future capacity decisions.", source: "Safal Niveshak" },
+    ],
+  },
+  {
+    id: "package-qc",
+    num: "04",
+    title: "Package & quality-check",
+    topRisk: "good",
+    summary: "Finished cement is tested in-lab against strength/quality standards, then packed into bags or loaded in bulk for dispatch.",
+    steps: ["Lab quality testing", "Bagging / bulk loading", "Storage (silos)"],
+    risks: [
+      { variable: "Process maturity", level: "good", text: "Packaging and QC are standardized, well-understood processes across the industry — not a major source of business risk.", source: "Framework analysis" },
+      { variable: "Cement shelf-life", level: "warning", text: "Cement has roughly a 90-day usable shelf life, which is why grinding/packing plants are kept close to regional demand rather than stockpiled centrally.", source: "Zerodha Varsity" },
+    ],
+  },
+  {
+    id: "distribute",
+    num: "05",
+    title: "Distribute & transport",
+    topRisk: "critical",
+    summary: "Because cement is heavy and low-value-per-kg, freight cost dominates. Plants effectively serve only a 150-300 km radius before transport eats the margin — this is why cement is a fundamentally regional business.",
+    steps: ["Road / rail dispatch", "Regional warehousing", "RMC plant delivery", "Last-mile to dealer / site"],
+    risks: [
+      { variable: "Logistics cost share", level: "critical", text: "Freight/transportation is roughly 20-25% of sales industry-wide — often bigger than net profit margin — making location and network the real competitive edge.", source: "Safal Niveshak" },
+      { variable: "Distance to market", level: "warning", text: "Plants typically serve customers within 150-300 km; UltraTech's scale gives it coverage of 90%+ of India's talukas.", source: "Safal Niveshak" },
+      { variable: "Regional concentration risk", level: "good", text: "UltraTech is diversified across regions (plus UAE, Bahrain, Sri Lanka) rather than concentrated in one state.", source: "The Strategy Story" },
+    ],
+  },
+  {
+    id: "sell",
+    num: "06",
+    title: "Sell to customers",
+    topRisk: "warning",
+    summary: "Cement reaches builders and homeowners mainly through a vast dealer network, plus direct sales to large contractors and infrastructure projects, and a growing retail 'Building Solutions' channel.",
+    steps: ["Dealer / channel-partner network", "B2B: contractors & infra projects", "B2C: individual home-builders", "Building Solutions retail outlets"],
+    risks: [
+      { variable: "Customer concentration", level: "good", text: "Very fragmented — 1.5+ lakh channel partners and ~30,000 delivery destinations — so no single customer has real bargaining power.", source: "The Strategy Story" },
+      { variable: "Pricing power", level: "warning", text: "Limited industry-wide — transparent local pricing tends to trigger price wars when regional capacity utilization is low.", source: "Safal Niveshak" },
+      { variable: "Demand driver", level: "warning", text: "Sales track housing, infrastructure and industrial construction activity — cyclical with GDP (~1.2x) and seasonally weaker in monsoon.", source: "Safal Niveshak" },
+      { variable: "Market concentration", level: "good", text: "Consolidated industry — top 3-4 players hold roughly a third of capacity, with UltraTech the largest — supports more rational competition than a fragmented market.", source: "Safal Niveshak" },
+    ],
+  },
+];
+
+const CROSSCUT = [
+  { title: "Ownership & governance", body: "Part of the Aditya Birla Group — an established Indian promoter conglomerate. Low risk from an ownership-stability standpoint." },
+  { title: "Financial leverage", body: "Not yet researched — debt/EBITDA or debt/equity needs to be pulled from the balance sheet before this can be rated." },
+  { title: "Regulatory disputes", body: "Not yet researched — check for pending mining or environmental litigation, including reported community concerns around mining in Chhattisgarh." },
+];
+
+function riskIcon(level) {
+  if (level === "good") return '<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  if (level === "warning") return '<svg viewBox="0 0 16 16" fill="none"><path d="M8 2L14.5 13H1.5L8 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8 6.5V9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="11.3" r="0.9" fill="currentColor"/></svg>';
+  return '<svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.6"/><path d="M8 5V8.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="10.8" r="0.9" fill="currentColor"/></svg>';
+}
+function riskLabel(level) { return level === "good" ? "Low" : level === "warning" ? "Medium" : "High"; }
+
+const flowRow = document.getElementById("flowRow");
+const arrowRow = document.getElementById("arrowRow");
+const detail = document.getElementById("detail");
+const footerNote = document.getElementById("footerNote");
+
+STAGES.forEach((s, i) => {
+  const btn = document.createElement("button");
+  btn.className = "stage";
+  btn.id = "stage-" + s.id;
+  btn.innerHTML = `
+    <div class="stage-num">Step ${s.num}</div>
+    <div class="stage-title">${s.title}</div>
+    <div class="risk-badges">
+      ${[...new Set(s.risks.map(r => r.level))].sort((a,b)=>({critical:0,warning:1,good:2}[a]-{critical:0,warning:1,good:2}[b])).map(lvl => `<span class="badge ${lvl}">${riskIcon(lvl)}${riskLabel(lvl)}</span>`).join("")}
+    </div>
+  `;
+  btn.addEventListener("click", () => selectStage(s.id));
+  flowRow.appendChild(btn);
+
+  if (i < STAGES.length - 1) {
+    const conn = document.createElement("div");
+    conn.className = "connector";
+    conn.textContent = "→";
+    arrowRow.appendChild(conn);
+  } else {
+    const spacer = document.createElement("div");
+    arrowRow.appendChild(spacer);
+  }
+});
+// pad arrow row to align (6 columns, 5 arrows + 1 blank already added)
+
+function selectStage(id) {
+  document.querySelectorAll(".stage").forEach(el => el.classList.remove("active"));
+  document.getElementById("stage-" + id).classList.add("active");
+  const s = STAGES.find(x => x.id === id);
+  detail.innerHTML = `
+    <div class="detail-head">
+      <h2>Step ${s.num} — ${s.title}</h2>
+      <span class="close-hint" id="closeDetail">hide ✕</span>
+    </div>
+    <p class="detail-summary">${s.summary}</p>
+    <div class="steps">${s.steps.map(st => `<span class="step-chip">${st}</span>`).join("")}</div>
+    <table class="risk-table">
+      <thead><tr><th style="width:150px">Variable</th><th style="width:70px">Risk</th><th>What we found</th><th style="width:150px">Source</th></tr></thead>
+      <tbody>
+        ${s.risks.map(r => `
+          <tr>
+            <td class="rt-variable">${r.variable}</td>
+            <td><span class="badge ${r.level}">${riskIcon(r.level)}${riskLabel(r.level)}</span></td>
+            <td>${r.text}</td>
+            <td class="rt-source">${r.source}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+    <div class="crosscut">
+      <h3>Cross-cutting risks (apply across every stage)</h3>
+      <div class="cc-grid">
+        ${CROSSCUT.map(c => `<div class="cc-card"><div class="cc-title">${c.title}</div><div class="cc-body">${c.body}</div></div>`).join("")}
+      </div>
+    </div>
+  `;
+  detail.style.display = "block";
+  document.getElementById("closeDetail").addEventListener("click", (e) => {
+    e.stopPropagation();
+    detail.style.display = "none";
+    document.querySelectorAll(".stage").forEach(el => el.classList.remove("active"));
+  });
+  footerNote.textContent = "";
+}
+
+// default: open first stage
+selectStage(STAGES[0].id);
+
+footerNote.innerHTML = "Companion to Business_Variable_Framework.xlsx. Click any step above to see its process detail and risks. Ratings: Low = well-managed / low exposure, Medium = matters but has some buffer, High = could meaningfully hurt the business if it goes wrong.";
+
+// Theme toggle
+const themeToggle = document.getElementById("themeToggle");
+const root = document.documentElement;
+function applyThemeLabel() {
+  const current = root.getAttribute("data-theme");
+  themeToggle.textContent = current === "dark" ? "Light mode" : "Dark mode";
+}
+themeToggle.addEventListener("click", () => {
+  const current = root.getAttribute("data-theme");
+  if (current === "dark") {
+    root.setAttribute("data-theme", "light");
+  } else {
+    root.setAttribute("data-theme", "dark");
+  }
+  applyThemeLabel();
+});
+applyThemeLabel();
+</script>
+</body>
+</html>

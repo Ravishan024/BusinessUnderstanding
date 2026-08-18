@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UltraTech Cement — The Simple Version</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --surface-2:      #f4f3f0;
+    --surface-3:      #eceae5;
+    --border:         #ddd9d2;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #83817a;
+    --accent:         #2a78d6;
+    --accent-soft:    #e7f0fb;
+    --good:           #0ca30c;
+    --warning:        #fab219;
+    --critical:       #d03b3b;
+    --good-bg:        #e5f7e5;
+    --warning-bg:     #fff4dd;
+    --critical-bg:    #fbe6e6;
+    --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-1: #1a1a19; --surface-2: #232322; --surface-3: #2c2c2a; --border: #3a3a37;
+      --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #8f8d84;
+      --accent: #3987e5; --accent-soft: #17263a;
+      --good: #0ca30c; --warning: #fab219; --critical: #e66767;
+      --good-bg: #123312; --warning-bg: #3a2c0e; --critical-bg: #3a1717;
+      --s1: #3987e5; --s2: #d95926; --s3: #199e70;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --surface-1: #1a1a19; --surface-2: #232322; --surface-3: #2c2c2a; --border: #3a3a37;
+    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #8f8d84;
+    --accent: #3987e5; --accent-soft: #17263a;
+    --good: #0ca30c; --warning: #fab219; --critical: #e66767;
+    --good-bg: #123312; --warning-bg: #3a2c0e; --critical-bg: #3a1717;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background: var(--surface-1); color: var(--text-primary); }
+  .viz-root { background: var(--surface-1); min-height: 100vh; padding: 28px 24px 60px; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+
+  .top-bar { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 4px; }
+  h1 { font-size: 24px; margin: 0 0 6px; }
+  .subtitle { color: var(--text-secondary); font-size: 15px; margin: 0 0 8px; line-height: 1.55; max-width: 640px; }
+  .breadcrumb { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
+  .breadcrumb a { color: var(--accent); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .theme-toggle { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-secondary); border-radius: 8px; padding: 6px 12px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+  .theme-toggle:hover { background: var(--surface-3); }
+
+  /* Hero one-liner */
+  .hero-card {
+    background: var(--accent-soft); border: 1px solid var(--border); border-radius: 14px;
+    padding: 22px 24px; margin-bottom: 28px;
+  }
+  .hero-card .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+  .hero-card p { font-size: 18px; line-height: 1.55; margin: 0; color: var(--text-primary); }
+
+  h2.section-title { font-size: 15px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-muted); margin: 34px 0 14px; }
+
+  /* Three-step flow */
+  .flow3 { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 10px; align-items: stretch; margin-bottom: 6px; }
+  .flow3-card { background: var(--surface-2); border: 1.5px solid var(--border); border-radius: 12px; padding: 18px 16px; text-align: center; }
+  .flow3-card .flow-icon { font-size: 26px; margin-bottom: 8px; }
+  .flow3-card .flow-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .flow3-card .flow-body { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+  .flow3-arrow { display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 20px; }
+  @media (max-width: 640px) {
+    .flow3 { grid-template-columns: 1fr; }
+    .flow3-arrow { transform: rotate(90deg); padding: 4px 0; }
+  }
+
+  /* Raw material cards */
+  .mat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .mat-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .mat-card .mat-icon { font-size: 24px; margin-bottom: 8px; }
+  .mat-card .mat-name { font-size: 13.5px; font-weight: 700; margin-bottom: 4px; }
+  .mat-card .mat-role { font-size: 12px; color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+  .mat-card .mat-body { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  @media (max-width: 640px) { .mat-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 420px) { .mat-grid { grid-template-columns: 1fr; } }
+
+  /* Stat tiles */
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .stat-tile { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .stat-tile .stat-value { font-size: 24px; font-weight: 700; color: var(--text-primary); }
+  .stat-tile .stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4; }
+  @media (max-width: 640px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+
+  /* Who buys */
+  .buyer-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .buyer-pill { background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 10px 16px; font-size: 13px; color: var(--text-primary); display: flex; align-items: center; gap: 8px; }
+  .buyer-pill .pct { font-weight: 700; color: var(--accent); }
+
+  /* Watch-out cards */
+  .watch-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .watch-card { background: var(--warning-bg); border-left: 3px solid var(--warning); border-radius: 8px; padding: 14px 16px; }
+  .watch-card .watch-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--text-primary); }
+  .watch-card .watch-body { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+  :root[data-theme="dark"] .watch-card .watch-body { color: var(--text-secondary); }
+  @media (max-width: 640px) { .watch-grid { grid-template-columns: 1fr; } }
+
+  .more-box {
+    margin-top: 34px; padding: 18px 20px; background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .more-box p { margin: 0; font-size: 13px; color: var(--text-secondary); }
+  .more-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .more-link { text-decoration: none; font-size: 12.5px; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 7px 14px; white-space: nowrap; }
+  .more-link:hover { text-decoration: underline; }
+
+  .footer-note { margin-top: 26px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="viz-root" id="vizRoot">
+  <div class="wrap">
+    <div class="top-bar">
+      <div>
+        <h1>UltraTech Cement — The Simple Version</h1>
+        <p class="subtitle">No jargon, just the basics: what this company makes, what it needs to make it, and how it turns that into money.</p>
+      </div>
+      <button class="theme-toggle" id="themeToggle">Dark mode</button>
+    </div>
+    <div class="breadcrumb">Part of the Equity Research project · see the <a href="ultratech_overview.html">full detailed breakdown</a> for the deeper version of this page</div>
+
+    <div class="hero-card">
+      <div class="eyebrow">In one sentence</div>
+      <p>UltraTech digs up rock (mostly limestone), burns it at extremely high heat to turn it into a powder, grinds that powder into cement, and sells it — mostly to construction companies and people building homes — all across India.</p>
+    </div>
+
+    <h2 class="section-title">What the business does, in three steps</h2>
+    <div class="flow3">
+      <div class="flow3-card">
+        <div class="flow-icon">⛏️</div>
+        <div class="flow-title">1. Dig up the ingredients</div>
+        <div class="flow-body">Mostly limestone, plus some clay, silica and gypsum, all mined near the factory.</div>
+      </div>
+      <div class="flow3-arrow">→</div>
+      <div class="flow3-card">
+        <div class="flow-icon">🔥</div>
+        <div class="flow-title">2. Cook it into cement</div>
+        <div class="flow-body">Burn it at ~1450°C (hotter than lava) to make "clinker", then grind that into the grey powder we call cement.</div>
+      </div>
+      <div class="flow3-arrow">→</div>
+      <div class="flow3-card">
+        <div class="flow-icon">🚚</div>
+        <div class="flow-title">3. Ship it and sell it</div>
+        <div class="flow-body">Trucked or trained to nearby towns and cities, sold through local dealers to builders and homeowners.</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">What it needs to make cement</h2>
+    <div class="mat-grid">
+      <div class="mat-card">
+        <div class="mat-icon">🪨</div>
+        <div class="mat-name">Limestone</div>
+        <div class="mat-role">The main ingredient</div>
+        <div class="mat-body">Makes up most of cement by weight. UltraTech owns its own limestone quarries next to its factories, so it doesn't have to buy this from anyone.</div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-icon">🧱</div>
+        <div class="mat-name">Clay, silica & gypsum</div>
+        <div class="mat-role">Smaller ingredients</div>
+        <div class="mat-body">Added in smaller amounts to get the right chemistry. Usually sourced from nearby suppliers.</div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-icon">🔥</div>
+        <div class="mat-name">Coal / fuel</div>
+        <div class="mat-role">The energy to cook it</div>
+        <div class="mat-body">Needed to reach the extreme heat that turns limestone into clinker. This is the single most expensive, most unpredictable input.</div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-icon">⚡</div>
+        <div class="mat-name">Electricity</div>
+        <div class="mat-role">Powers the machines</div>
+        <div class="mat-body">Runs the crushers and grinders. UltraTech generates some of its own power on-site to help control this cost.</div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-icon">🚛</div>
+        <div class="mat-name">Trucks & trains</div>
+        <div class="mat-role">Gets it to customers</div>
+        <div class="mat-body">Cement is heavy and can't travel far economically, so a lot of the cost is just moving it a few hundred kilometers.</div>
+      </div>
+      <div class="mat-card">
+        <div class="mat-icon">🏗️</div>
+        <div class="mat-name">Dealers & builders</div>
+        <div class="mat-role">Where it ends up</div>
+        <div class="mat-body">Sold through a huge network of local dealers, mostly to construction companies and people building or renovating homes.</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">The company, in numbers</h2>
+    <div class="stat-grid">
+      <div class="stat-tile">
+        <div class="stat-value">#1</div>
+        <div class="stat-label">Biggest cement company in India, and the biggest outside China</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-value">200+ MTPA</div>
+        <div class="stat-label">Cement it can produce a year (MTPA = million tonnes per year)</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-value">1.5+ lakh</div>
+        <div class="stat-label">Local dealers who sell its cement across India</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Countries it also operates in besides India (UAE, Bahrain, Sri Lanka)</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Who actually buys it</h2>
+    <div class="buyer-row">
+      <div class="buyer-pill">🏗️ Construction companies & contractors building roads, bridges, buildings</div>
+      <div class="buyer-pill">🏠 Everyday people building or renovating their own homes</div>
+      <div class="buyer-pill">🏛️ Government infrastructure projects</div>
+    </div>
+
+    <h2 class="section-title">Three things that could hurt the business</h2>
+    <div class="watch-grid">
+      <div class="watch-card">
+        <div class="watch-title">🔥 Fuel gets expensive</div>
+        <div class="watch-body">Coal prices jump around a lot, and coal is the single biggest thing driving how much it costs to make each tonne of cement.</div>
+      </div>
+      <div class="watch-card">
+        <div class="watch-title">📍 A local problem near a factory</div>
+        <div class="watch-body">Because cement doesn't travel far economically, trouble near one factory (bad weather, a mining dispute, a water shortage) hits that whole region hard.</div>
+      </div>
+      <div class="watch-card">
+        <div class="watch-title">🏗️ Builders slow down</div>
+        <div class="watch-body">Cement demand rises and falls with how much construction is happening in the country — when the economy slows, so does cement demand.</div>
+      </div>
+    </div>
+
+    <div class="more-box">
+      <p>Want the deeper version — the full risk breakdown, plant-by-plant map, and business variable checklist?</p>
+      <div class="more-links">
+        <a class="more-link" href="ultratech_overview.html">Full Process & Risk Map</a>
+        <a class="more-link" href="ultratech_overview.html#map">India & International Map</a>
+      </div>
+    </div>
+
+    <div class="footer-note">Part of the Equity Research learning project. This page is deliberately simplified — for the numbers, sources and risk ratings behind these statements, see the full Overview page and the Business_Variable_Framework.xlsx workbook.</div>
+  </div>
+</div>
+
+<script>
+const themeToggle = document.getElementById("themeToggle");
+const root = document.documentElement;
+function applyThemeLabel() {
+  const current = root.getAttribute("data-theme");
+  themeToggle.textContent = current === "dark" ? "Light mode" : "Dark mode";
+}
+themeToggle.addEventListener("click", () => {
+  const current = root.getAttribute("data-theme");
+  root.setAttribute("data-theme", current === "dark" ? "light" : "dark");
+  applyThemeLabel();
+});
+applyThemeLabel();
+</script>
+</body>
+</html>
