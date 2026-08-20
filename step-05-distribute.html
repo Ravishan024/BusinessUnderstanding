@@ -160,6 +160,36 @@
     .content { grid-template-columns: 1fr; }
     .cc-grid { grid-template-columns: 1fr; }
   }
+
+  /* channel cards (distribution step) */
+  .channel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 8px 0 18px; }
+  .channel-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+  .channel-card.institutional { border-color: var(--accent); }
+  .channel-card .channel-tag { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; padding: 3px 9px; border-radius: 999px; margin-bottom: 8px; }
+  .channel-card.trade .channel-tag { background: var(--good-bg); color: var(--good); }
+  .channel-card.institutional .channel-tag { background: var(--accent-soft); color: var(--accent); }
+  .channel-card h3 { font-size: 14px; margin: 0 0 6px; }
+  .channel-card .channel-stat { font-size: 20px; font-weight: 800; margin: 4px 0; }
+  .channel-card ul { margin: 8px 0 0; padding-left: 18px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; }
+  .channel-card p.channel-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.55; margin: 4px 0 0; }
+  .channel-source { font-size: 10.5px; color: var(--text-muted); margin-top: 10px; }
+
+  /* region sales-mix table (sell step) */
+  table.region-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 8px 0 6px; }
+  table.region-table th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-muted); font-weight: 700; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  table.region-table td { padding: 10px 10px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text-primary); }
+  table.region-table tr:last-child td { border-bottom: none; }
+  .lean-badge { display: inline-flex; white-space: nowrap; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 999px; }
+  .lean-badge.inst { background: var(--accent-soft); color: var(--accent); }
+  .lean-badge.trade { background: var(--good-bg); color: var(--good); }
+  .lean-badge.mixed { background: var(--warning-bg); color: #a8720c; }
+  :root[data-theme="dark"] .lean-badge.mixed { color: var(--warning); }
+  .region-caveat { border-left: 3px solid var(--warning); background: var(--warning-bg); border-radius: 6px; padding: 10px 14px; font-size: 12px; color: var(--text-primary); line-height: 1.55; margin-top: 10px; }
+  :root[data-theme="dark"] .region-caveat { color: var(--text-secondary); }
+
+  @media (max-width: 640px) {
+    .channel-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -190,6 +220,37 @@
     <h2 class="section-title">In detail</h2>
     <div class="deep-dive"><p>This is arguably the step that defines cement as an industry: unlike software or pharma, a cement company's competitiveness is set as much by where its plants sit relative to its customers as by anything happening inside the plant. Freight cost is large enough, relative to the product's value, that a well-located regional plant can beat a more efficient but farther-away plant on delivered price.</p><p>UltraTech's scale advantage shows up here as much as in manufacturing — a bigger network of plants, grinding units and bulk terminals means more of the country falls inside someone's economical delivery radius, which is a big part of why the company can claim coverage of over 90% of India's talukas.</p></div>
     
+
+    <h2 class="section-title">How cement actually reaches customers — two channels</h2>
+
+        <div class="channel-grid">
+          <div class="channel-card trade">
+            <span class="channel-tag">Trade / retail channel</span>
+            <h3>Dealer &amp; retailer network → individual builders (B2C-ish)</h3>
+            <div class="channel-stat">~67% of sales</div>
+            <p class="channel-desc">Cement moves from grinding units / bulk terminals into a vast dealer and retailer network, which sells small bagged quantities to individual homeowners, masons and small local contractors building their own house. Lots of small transactions; the dealer holds the inventory and takes the last-mile risk.</p>
+            <ul>
+              <li>138,000+ retailers &amp; dealers across India</li>
+              <li>100,000+ retail partners</li>
+              <li>2,800+ "UltraTech Building Solutions" advisory stores (guided selling, not just a shop)</li>
+            </ul>
+            <div class="channel-source">Source: Axis Securities annual analysis (FY24 trade mix ~67%), company disclosures</div>
+          </div>
+          <div class="channel-card institutional">
+            <span class="channel-tag">Institutional / non-trade channel</span>
+            <h3>Direct &amp; RMC → developers, infra, industry (B2B)</h3>
+            <div class="channel-stat">~33% of sales</div>
+            <p class="channel-desc">The rest goes direct — bulk cement or ready-mix concrete (RMC) sold straight to real estate developers, project management companies (PMCs), government infrastructure projects (highways, metro rail) and industrial buyers. Fewer orders, but each one is far larger and negotiated with service-level agreements.</p>
+            <ul>
+              <li>316 RMC plants across 139+ cities — India's largest RMC player</li>
+              <li>Direct supply to developers, PMCs, government infra (e.g. NHAI highways, metro rail projects)</li>
+              <li>Order sizes and pricing are negotiated, not walk-in retail</li>
+            </ul>
+            <div class="channel-source">Source: Axis Securities annual analysis, UltraTech Concrete / RMC disclosures</div>
+          </div>
+        </div>
+        <p class="map-caption" style="margin-top:-6px">Same physical distribution network (grinding units + bulk/RMC hubs) serves both channels — what differs is <i>who</i> places the order and <i>how</i> it's fulfilled, not where the cement physically comes from. See the next step for how this channel mix varies by region.</p>
+        
 
     <h2 class="section-title">Risk variables at this step</h2>
     <table class="risk-table">

@@ -160,6 +160,36 @@
     .content { grid-template-columns: 1fr; }
     .cc-grid { grid-template-columns: 1fr; }
   }
+
+  /* channel cards (distribution step) */
+  .channel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 8px 0 18px; }
+  .channel-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+  .channel-card.institutional { border-color: var(--accent); }
+  .channel-card .channel-tag { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; padding: 3px 9px; border-radius: 999px; margin-bottom: 8px; }
+  .channel-card.trade .channel-tag { background: var(--good-bg); color: var(--good); }
+  .channel-card.institutional .channel-tag { background: var(--accent-soft); color: var(--accent); }
+  .channel-card h3 { font-size: 14px; margin: 0 0 6px; }
+  .channel-card .channel-stat { font-size: 20px; font-weight: 800; margin: 4px 0; }
+  .channel-card ul { margin: 8px 0 0; padding-left: 18px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.6; }
+  .channel-card p.channel-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.55; margin: 4px 0 0; }
+  .channel-source { font-size: 10.5px; color: var(--text-muted); margin-top: 10px; }
+
+  /* region sales-mix table (sell step) */
+  table.region-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 8px 0 6px; }
+  table.region-table th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-muted); font-weight: 700; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  table.region-table td { padding: 10px 10px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text-primary); }
+  table.region-table tr:last-child td { border-bottom: none; }
+  .lean-badge { display: inline-flex; white-space: nowrap; font-size: 10.5px; font-weight: 700; padding: 3px 8px; border-radius: 999px; }
+  .lean-badge.inst { background: var(--accent-soft); color: var(--accent); }
+  .lean-badge.trade { background: var(--good-bg); color: var(--good); }
+  .lean-badge.mixed { background: var(--warning-bg); color: #a8720c; }
+  :root[data-theme="dark"] .lean-badge.mixed { color: var(--warning); }
+  .region-caveat { border-left: 3px solid var(--warning); background: var(--warning-bg); border-radius: 6px; padding: 10px 14px; font-size: 12px; color: var(--text-primary); line-height: 1.55; margin-top: 10px; }
+  :root[data-theme="dark"] .region-caveat { color: var(--text-secondary); }
+
+  @media (max-width: 640px) {
+    .channel-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -190,6 +220,52 @@
     <h2 class="section-title">In detail</h2>
     <div class="deep-dive"><p>The 'sale' itself is less a single event and more the result of everything upstream. A fragmented dealer network means no single customer can squeeze UltraTech on price — but it also means the company can't just decide to raise prices either. Local market conditions, mainly how much unused capacity nearby competitors have, set the real ceiling.</p><p>The 'Building Solutions' retail push is UltraTech trying to move part of its business away from being a pure commodity seller, where price is everything, toward a branded, value-added relationship with the end customer — the same logic that pushes any commodity business toward downstream, higher-margin products when it can.</p></div>
     
+
+    <h2 class="section-title">Sales mix by region — trade vs institutional lean</h2>
+
+        <table class="region-table">
+          <thead><tr><th style="width:130px">Zone</th><th style="width:230px">Representative states</th><th style="width:150px">Lean</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>North</b></td>
+              <td>Delhi-NCR, Haryana, Punjab, Rajasthan, western UP</td>
+              <td><span class="lean-badge inst">Institutional-leaning</span></td>
+              <td>Heavy government infrastructure spend: Delhi Metro extensions, the Dedicated Freight Corridor (DFC), NHAI highway building, smart-city projects.</td>
+            </tr>
+            <tr>
+              <td><b>West</b></td>
+              <td>Maharashtra, Gujarat</td>
+              <td><span class="lean-badge mixed">Mixed, institutional tilt</span></td>
+              <td>Big-ticket infra (Mumbai-Ahmedabad bullet train, metro systems, expressways) alongside strong urban real-estate demand in Mumbai/Pune/Ahmedabad.</td>
+            </tr>
+            <tr>
+              <td><b>Central</b></td>
+              <td>Madhya Pradesh, Chhattisgarh</td>
+              <td><span class="lean-badge inst">Institutional-leaning</span></td>
+              <td>Metro projects in cities like Bhopal, plus government waterway and highway infrastructure spending.</td>
+            </tr>
+            <tr>
+              <td><b>South</b></td>
+              <td>Tamil Nadu, Karnataka, Andhra Pradesh, Telangana</td>
+              <td><span class="lean-badge mixed">Mixed — not clearly sourced</span></td>
+              <td>Chennai/Bengaluru/Hyderabad metro rail and industrial growth alongside large housing demand, but a clean trade-vs-institutional split for this zone specifically wasn't findable — flagged for follow-up research.</td>
+            </tr>
+            <tr>
+              <td><b>East</b></td>
+              <td>West Bengal, Bihar, Jharkhand, Odisha</td>
+              <td><span class="lean-badge trade">Trade-leaning</span></td>
+              <td>Large rural housing shortage (~30-35 million units); the PMAY-G rural housing scheme is the main demand driver, sold mostly through the retail/dealer channel.</td>
+            </tr>
+            <tr>
+              <td><b>North-East</b></td>
+              <td>Assam and neighbouring states</td>
+              <td><span class="lean-badge trade">Trade-leaning</span></td>
+              <td>Infrastructure still developing; rural housing upgrades ("concretisation" of kutcha homes) are the main growth driver.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="region-caveat"><b>Caveat:</b> this reflects an India-wide cement-industry demand pattern (CRISIL industry report, via a JSW Cement offer document), not an UltraTech-specific number broken out by zone — UltraTech doesn't publicly disclose its trade/institutional split state-by-state. Pan-India, overall demand runs roughly <b>65-70% trade / 30-35% institutional</b> (FY25). Treat this table as a reasonable starting map of where each type of demand concentrates, not verified company data.</div>
+        
 
     <h2 class="section-title">Risk variables at this step</h2>
     <table class="risk-table">
