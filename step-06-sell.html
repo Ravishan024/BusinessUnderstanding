@@ -126,6 +126,14 @@
   :root[data-theme="dark"] .state-path.risk-cyclone { fill: #1f3350; }
   :root[data-theme="dark"] .state-path.risk-water { fill: #4a3a17; }
   :root[data-theme="dark"] .state-path.risk-pollution { fill: #3a352a; }
+  .state-path.lean-inst { fill: #cfe0f7; }
+  .state-path.lean-trade { fill: #d3ecd3; }
+  .state-path.lean-mixed { fill: #f7e2b8; }
+  :root[data-theme="dark"] .state-path.lean-inst { fill: #1f3350; }
+  :root[data-theme="dark"] .state-path.lean-trade { fill: #1f3a1f; }
+  :root[data-theme="dark"] .state-path.lean-mixed { fill: #3a2c0e; }
+  .lean-toggle-btn { font-size: 12.5px; color: var(--text-primary); background: var(--surface-1); border: 1px solid var(--border); border-radius: 999px; padding: 6px 13px; cursor: pointer; font-weight: 600; }
+  .lean-toggle-btn.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
   .marker { cursor: pointer; }
   .marker circle.ring { fill: none; stroke-width: 0.18; opacity: 0; transition: opacity .15s ease; }
   .marker:hover circle.ring, .marker.active circle.ring { opacity: 1; }
@@ -300,7 +308,7 @@
     <div class="cc-grid"><div class="cc-card"><div class="cc-title">Ownership & governance</div><div class="cc-body">Part of the Aditya Birla Group — an established Indian promoter conglomerate. Low risk from an ownership-stability standpoint.</div></div><div class="cc-card"><div class="cc-title">Financial leverage</div><div class="cc-body">Not yet researched — debt/EBITDA or debt/equity needs to be pulled from the balance sheet before this can be rated.</div></div><div class="cc-card"><div class="cc-title">Regulatory disputes</div><div class="cc-body">Not yet researched — check for pending mining or environmental litigation, including reported community concerns around mining in Chhattisgarh.</div></div></div>
 
     <h2 class="section-title">Where this happens</h2>
-    <p class="map-caption">Customer-facing sales run through the same distribution network — grinding units and bulk/RMC hubs closest to demand — shown here again from the selling side of the same physical footprint.</p>
+    <p class="map-caption">Customer-facing sales run through the same distribution network — grinding units and bulk/RMC hubs closest to demand. Toggle the sales channel overlay below to see which states lean B2B (institutional) vs B2C (trade/retail).</p>
     <div class="controls">
       <div class="control-group">
         <span class="control-label">Show:</span>
@@ -310,6 +318,7 @@
       </div>
       <div class="control-group">
         <button class="risk-toggle-btn" id="riskToggle">Show regional risk overlay</button>
+        <button class="lean-toggle-btn" id="leanToggle">Show sales channel overlay</button>
       </div>
     </div>
     <div class="content">
@@ -324,6 +333,7 @@
           <div class="legend-row"><span class="legend-swatch" style="background:#eb6834"></span>Grinding unit</div>
           <div class="legend-row"><span class="legend-swatch" style="background:#1baf7a"></span>Bulk terminal / RMC hub</div>
         </div>
+        <div class="legend-block"><h4>Sales channel lean (states)</h4><div class="legend-row"><span class="legend-swatch" style="background:#2a78d6"></span>Institutional-leaning (more B2B / infra)</div><div class="legend-row"><span class="legend-swatch" style="background:#0ca30c"></span>Trade-leaning (more B2C / retail)</div><div class="legend-row"><span class="legend-swatch" style="background:#c98a1f"></span>Mixed / not clearly sourced</div></div>
       </div>
     </div>
     <div class="footer-note">For the full India map with all facility types plus the International Footprint (UAE, Bahrain, Sri Lanka), see the <a href="index.html#map">Overview page</a>.</div>
@@ -356,6 +366,7 @@ const RISK_NOTES = {"mining": {"label": "Mining / land & community risk", "detai
 const TYPE_META = {"integrated": {"label": "Integrated plant (captive limestone + kiln)", "color": "#2a78d6"}, "grinding": {"label": "Grinding unit", "color": "#eb6834"}, "hub": {"label": "Bulk terminal / RMC & distribution hub", "color": "#1baf7a"}};
 const BOUNDS = {"minx": 68.19708251953153, "miny": 8.076525688171444, "maxx": 97.41516113281278, "maxy": 35.50133132934593, "cos_lat": 0.928557570429079};
 const FOCUS_TYPES = ["hub", "grinding"];
+const REGION_LEAN = {"Delhi": {"zone": "North", "lean": "inst"}, "Haryana": {"zone": "North", "lean": "inst"}, "Punjab": {"zone": "North", "lean": "inst"}, "Rajasthan": {"zone": "North", "lean": "inst"}, "Uttar Pradesh": {"zone": "North", "lean": "inst"}, "Chandigarh": {"zone": "North", "lean": "inst"}, "Himachal Pradesh": {"zone": "North", "lean": "inst"}, "Jammu and Kashmir": {"zone": "North", "lean": "inst"}, "Uttaranchal": {"zone": "North", "lean": "inst"}, "Maharashtra": {"zone": "West", "lean": "mixed"}, "Gujarat": {"zone": "West", "lean": "mixed"}, "Goa": {"zone": "West", "lean": "mixed"}, "Dadra and Nagar Haveli": {"zone": "West", "lean": "mixed"}, "Daman and Diu": {"zone": "West", "lean": "mixed"}, "Madhya Pradesh": {"zone": "Central", "lean": "inst"}, "Chhattisgarh": {"zone": "Central", "lean": "inst"}, "Andhra Pradesh": {"zone": "South", "lean": "mixed"}, "Telangana": {"zone": "South", "lean": "mixed"}, "Karnataka": {"zone": "South", "lean": "mixed"}, "Tamil Nadu": {"zone": "South", "lean": "mixed"}, "Kerala": {"zone": "South", "lean": "mixed"}, "Puducherry": {"zone": "South", "lean": "mixed"}, "West Bengal": {"zone": "East", "lean": "trade"}, "Bihar": {"zone": "East", "lean": "trade"}, "Jharkhand": {"zone": "East", "lean": "trade"}, "Orissa": {"zone": "East", "lean": "trade"}, "Assam": {"zone": "North-East", "lean": "trade"}, "Arunachal Pradesh": {"zone": "North-East", "lean": "trade"}, "Manipur": {"zone": "North-East", "lean": "trade"}, "Meghalaya": {"zone": "North-East", "lean": "trade"}, "Mizoram": {"zone": "North-East", "lean": "trade"}, "Nagaland": {"zone": "North-East", "lean": "trade"}, "Sikkim": {"zone": "North-East", "lean": "trade"}, "Tripura": {"zone": "North-East", "lean": "trade"}};
 
 function project(lon, lat) {
   const x = (lon - BOUNDS.minx) * BOUNDS.cos_lat;
@@ -443,20 +454,40 @@ function applyFilters() {
 }
 document.querySelectorAll(".type-cb").forEach(cb => cb.addEventListener("change", applyFilters));
 
-let riskOn = false;
+let overlayMode = "none"; // "none" | "risk" | "lean"
 const riskBtn = document.getElementById("riskToggle");
-riskBtn.addEventListener("click", () => {
-  riskOn = !riskOn;
-  riskBtn.classList.toggle("on", riskOn);
-  riskBtn.textContent = riskOn ? "Hide regional risk overlay" : "Show regional risk overlay";
+const leanBtn = document.getElementById("leanToggle");
+
+function paintOverlay() {
   document.querySelectorAll(".state-path").forEach(p => {
     p.className.baseVal = "state-path";
-    if (riskOn && stateRisk[p.dataset.state]) {
+    if (overlayMode === "risk" && stateRisk[p.dataset.state]) {
       const tags = Array.from(stateRisk[p.dataset.state]);
       p.classList.add("risk-" + tags[0]);
+    } else if (overlayMode === "lean" && REGION_LEAN[p.dataset.state]) {
+      p.classList.add("lean-" + REGION_LEAN[p.dataset.state].lean);
     }
   });
+}
+
+riskBtn.addEventListener("click", () => {
+  overlayMode = overlayMode === "risk" ? "none" : "risk";
+  riskBtn.classList.toggle("on", overlayMode === "risk");
+  riskBtn.textContent = overlayMode === "risk" ? "Hide regional risk overlay" : "Show regional risk overlay";
+  if (leanBtn) { leanBtn.classList.remove("on"); leanBtn.textContent = "Show sales channel overlay"; }
+  paintOverlay();
 });
+
+if (leanBtn) {
+  leanBtn.addEventListener("click", () => {
+    overlayMode = overlayMode === "lean" ? "none" : "lean";
+    leanBtn.classList.toggle("on", overlayMode === "lean");
+    leanBtn.textContent = overlayMode === "lean" ? "Hide sales channel overlay" : "Show sales channel overlay";
+    riskBtn.classList.remove("on");
+    riskBtn.textContent = "Show regional risk overlay";
+    paintOverlay();
+  });
+}
 </script>
 </body>
 </html>
